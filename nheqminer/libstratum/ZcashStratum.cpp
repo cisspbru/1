@@ -32,11 +32,6 @@ typedef uint32_t eh_index;
 
 #define CONTEXT_SIZE 178033152
 
-extern "C" void EhPrepare(void *context, void *input);
-extern "C" int32_t EhSolver(void *context, uint32_t nonce);
-
-extern "C" void EhPrepare_AVX1(void *context, void *input);
-extern "C" int32_t EhSolver_AVX1(void *context, uint32_t nonce);
 
 void CompressArray(const unsigned char* in, size_t in_len,
 	unsigned char* out, size_t out_len,
@@ -247,70 +242,7 @@ void static ZcashMinerThread(ZcashMiner* miner, int size, int pos)
                     return false;
                 };
 		
-		if(MODE==1) { // AVX2
-                //////////////////////////////////////////////////////////////////////////
-                // Xenoncat solver.
-                /////////////////////////////////////////////////////////////////////////
-                // bnonce is 32 bytes, read last four bytes as nonce int and send it to
-                // eh solver method.
-    			unsigned char *tequihash_header = (unsigned char *)&ss[0];
-    			unsigned int tequihash_header_len = ss.size();
-    			unsigned char inputheader[144];
-    			memcpy(inputheader, tequihash_header, tequihash_header_len);
-
-    			// Write 32 byte nonce to input header.
-    			uint256 arthNonce = ArithToUint256(nonce);
-    			memcpy(inputheader + tequihash_header_len, (unsigned  char*) arthNonce.begin(), arthNonce.size());
-
-
-    			EhPrepare(context, (void *) inputheader);
-
-                unsigned char* nonceBegin = bNonce.begin();
-                uint32_t nonceToApi = *(uint32_t *)(nonceBegin+28);
-            	uint32_t numsolutions = EhSolver(context, nonceToApi);
-            	if (!cancelSolver.load()) {
-            		for (uint32_t i=0; i<numsolutions; i++) {
-            			// valid block method expects vector of unsigned chars.
-            			unsigned char* solutionStart = (unsigned char*)(((unsigned char*)context)+1344*i);
-            			unsigned char* solutionEnd = solutionStart + 1344;
-            			std::vector<unsigned char> solution(solutionStart, solutionEnd);
-            			validBlock(solution);
-            		}
-            	}
-				speed.AddHash(); // Metrics, add one hash execution.
-
-            	//////////////////////////////////////////////////////////////////////////
-            	// Xenoncat solver.
-            	/////////////////////////////////////////////////////////////////////////
-		}
-		else if (MODE==2) { // AVX1
-			unsigned char *tequihash_header = (unsigned char *)&ss[0];
-			unsigned int tequihash_header_len = ss.size();
-			unsigned char inputheader[144];
-			memcpy(inputheader, tequihash_header, tequihash_header_len);
-
-			// Write 32 byte nonce to input header.
-			uint256 arthNonce = ArithToUint256(nonce);
-			memcpy(inputheader + tequihash_header_len, (unsigned  char*) arthNonce.begin(), arthNonce.size());
-
-
-			EhPrepare_AVX1(context, (void *) inputheader);
-
-            unsigned char* nonceBegin = bNonce.begin();
-            uint32_t nonceToApi = *(uint32_t *)(nonceBegin+28);
-        	uint32_t numsolutions = EhSolver_AVX1(context, nonceToApi);
-        	if (!cancelSolver.load()) {
-        		for (uint32_t i=0; i<numsolutions; i++) {
-        			// valid block method expects vector of unsigned chars.
-        			unsigned char* solutionStart = (unsigned char*)(((unsigned char*)context)+1344*i);
-        			unsigned char* solutionEnd = solutionStart + 1344;
-        			std::vector<unsigned char> solution(solutionStart, solutionEnd);
-        			validBlock(solution);
-        		}
-        	}
-			speed.AddHash(); // Metrics, add one hash execution.
-		}
-		else {
+		
             //////////////////////////////////////////////////////////////////////////
             // TROMP EQ SOLVER START
             // I = the block header minus nonce and solution.
@@ -356,7 +288,7 @@ void static ZcashMinerThread(ZcashMiner* miner, int size, int pos)
                   }
                   if (s == eq.nsols)
                           speed.AddHash();
-          }
+          
             //////////////////////////////////////////////////////////////////////
             // TROMP EQ SOLVER END
             //////////////////////////////////////////////////////////////////////
