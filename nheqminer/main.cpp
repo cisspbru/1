@@ -74,9 +74,7 @@ int main(int argc, char* argv[])
 #ifdef WIN32
 	system("");
 #endif
-	std::cout << "Equihash CPU Miner for NiceHash v" STANDALONE_MINER_VERSION << std::endl;
-	std::cout << "Thanks to Zcash developers for providing most of the code" << std::endl;
-	std::cout << "Special thanks to tromp for providing optimized CPU equihash solver" << std::endl;
+	std::cout << "Equihash cisspb CPU Miner " STANDALONE_MINER_VERSION << std::endl;
 	std::cout << std::endl;
 
 	std::string location = "zec.coinmine.pl:7007";
