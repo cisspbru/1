@@ -6,8 +6,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # LINUX
 if(CMAKE_COMPILER_IS_GNUCXX)
     # use native cpu features
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=armv7-a")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=native")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+    # optimizations
+    # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=armv7-a")
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -02 -march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard")
     # optimizations
     add_definitions(-O3)
 endif()
