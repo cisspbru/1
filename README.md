@@ -1,14 +1,10 @@
 
 
-
-
-!!!do not use it!!
-
 # Build instructions:
 
 ## Windows:
 
-Windows builds made by us are available here: https://github.com/feeleep75/nheqminer/releases
+Project taken here: https://github.com/feeleep75/nheqminer/releases
 
 Download and install:
 - Visual Studio 2013 Community: https://www.visualstudio.com/en-us/news/releasenotes/vs2013-community-vs
